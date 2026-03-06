@@ -1,6 +1,6 @@
 {
   "name": "@feyman/i18n-auto-cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Automated i18n CLI tool for Vue and React projects",
   "bin": {
     "auto-i18n": "./dist/bin/cli.js"

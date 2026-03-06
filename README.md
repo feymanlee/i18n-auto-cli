@@ -63,13 +63,13 @@ yarn install
 
 ## 全局安装与使用 (支持老项目)
 
-对于不想在项目中安装依赖的老项目，你可以将 `@feymanlee/i18n-auto-cli` 安装到全局环境。
+对于不想在项目中安装依赖的老项目，你可以将 `@feyman/i18n-auto-cli` 安装到全局环境。
 
 ```bash
 # 全局安装
-npm install -g @feymanlee/i18n-auto-cli
+npm install -g @feyman/i18n-auto-cli
 # 或者
-yarn global add @feymanlee/i18n-auto-cli
+yarn global add @feyman/i18n-auto-cli
 ```
 
 安装完成后，你可以在任何项目目录下直接运行 `auto-i18n` 命令，无需在目标项目中安装任何依赖。

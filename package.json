@@ -1,0 +1,63 @@
+{
+  "name": "@feymanlee/auto-i18n-cli",
+  "version": "1.0.3",
+  "description": "Automated i18n CLI tool for Vue and React projects",
+  "bin": {
+    "auto-i18n": "./dist/bin/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/bin/cli.js",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "i18n",
+    "vue",
+    "react",
+    "automation",
+    "cli",
+    "translation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "@babel/types": "^7.28.5",
+    "@vitalets/google-translate-api": "^9.2.1",
+    "axios": "^1.13.6",
+    "chalk": "^4.1.2",
+    "commander": "^14.0.2",
+    "cosmiconfig": "^9.0.0",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.3",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.2",
+    "inquirer": "^13.0.2",
+    "lodash": "^4.17.21",
+    "magic-string": "^0.30.21",
+    "ora": "^9.0.0",
+    "tencentcloud-sdk-nodejs": "^4.1.153",
+    "tunnel": "^0.0.6",
+    "vue-eslint-parser": "^9.4.3"
+  },
+  "devDependencies": {
+    "@types/babel__core": "^7.20.5",
+    "@types/babel__traverse": "^7.28.0",
+    "@types/crypto-js": "^4.2.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/lodash": "^4.17.21",
+    "@types/node": "^24.10.1",
+    "@types/tunnel": "^0.0.7",
+    "@typescript-eslint/parser": "^8.56.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}

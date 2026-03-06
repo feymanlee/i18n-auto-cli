@@ -1,8 +1,8 @@
-# Auto-i18n-CLI 项目文档
+# i18n-auto-cli 项目文档
 
 ## 项目简介
 
-`auto-i18n-cli` 是一个基于 TypeScript 开发的自动化国际化（i18n）迁移工具。它旨在帮助开发者将遗留的 Vue 2/3 和 React 项目快速迁移到国际化支持状态。
+`i18n-auto-cli` 是一个基于 TypeScript 开发的自动化国际化（i18n）迁移工具。它旨在帮助开发者将遗留的 Vue 2/3 和 React 项目快速迁移到国际化支持状态。
 
 该工具通过 AST（抽象语法树）解析代码，自动识别并提取中文文本，调用腾讯云翻译 API 进行翻译，并以非破坏性的方式将代码中的硬编码中文替换为 i18n 键值引用（如 `$t('key')`）。
 
@@ -63,13 +63,13 @@ yarn install
 
 ## 全局安装与使用 (支持老项目)
 
-对于不想在项目中安装依赖的老项目，你可以将 `auto-i18n-cli` 安装到全局环境。
+对于不想在项目中安装依赖的老项目，你可以将 `@feymanlee/i18n-auto-cli` 安装到全局环境。
 
 ```bash
 # 全局安装
-npm install -g auto-i18n-cli
+npm install -g @feymanlee/i18n-auto-cli
 # 或者
-yarn global add auto-i18n-cli
+yarn global add @feymanlee/i18n-auto-cli
 ```
 
 安装完成后，你可以在任何项目目录下直接运行 `auto-i18n` 命令，无需在目标项目中安装任何依赖。
@@ -221,7 +221,7 @@ module.exports = {
 基于 `@vitalets/google-translate-api`，需要代理才能访问 Google 翻译服务。
 
 ```javascript
-const { GoogleTranslator } = require('auto-i18n-cli/dist/services/translators/google');
+const { GoogleTranslator } = require('i18n-auto-cli/dist/services/translators/google');
 
 module.exports = {
   translator: new GoogleTranslator({
@@ -243,7 +243,7 @@ module.exports = {
 基于百度翻译 API，需要申请 App ID 和 App Key。
 
 ```javascript
-const { BaiduTranslator } = require('auto-i18n-cli/dist/services/translators/baidu');
+const { BaiduTranslator } = require('i18n-auto-cli/dist/services/translators/baidu');
 
 module.exports = {
   translator: new BaiduTranslator({
@@ -260,7 +260,7 @@ module.exports = {
 基于火山引擎大模型 API，支持豆包、DeepSeek 等多种模型，翻译质量更高。支持批量翻译（默认 50 个文本并行），翻译速度快。
 
 ```javascript
-const { VolcengineTranslator } = require('auto-i18n-cli/dist/services/translators/volcengine');
+const { VolcengineTranslator } = require('i18n-auto-cli/dist/services/translators/volcengine');
 
 module.exports = {
   translator: new VolcengineTranslator({
@@ -299,7 +299,7 @@ module.exports = {
 不进行翻译，只生成 key。适用于只想提取中文文本但不翻译的场景。
 
 ```javascript
-const { EmptyTranslator } = require('auto-i18n-cli/dist/services/translators/empty');
+const { EmptyTranslator } = require('i18n-auto-cli/dist/services/translators/empty');
 
 module.exports = {
   translator: new EmptyTranslator()

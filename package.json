@@ -1,5 +1,5 @@
 {
-  "name": "@feymanlee/i18n-auto-cli",
+  "name": "@feyman/i18n-auto-cli",
   "version": "0.1.4",
   "description": "Automated i18n CLI tool for Vue and React projects",
   "bin": {

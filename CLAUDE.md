@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`auto-i18n-cli` is a TypeScript CLI tool that automates i18n migration for Vue 2/3 and React projects. It parses source files using AST, extracts Chinese text, translates via Tencent Cloud TMT API, and replaces hardcoded text with i18n function calls (e.g., `$t('key')`) using magic-string for non-destructive code replacements.
+`i18n-auto-cli` is a TypeScript CLI tool that automates i18n migration for Vue 2/3 and React projects. It parses source files using AST, extracts Chinese text, translates via Tencent Cloud TMT API, and replaces hardcoded text with i18n function calls (e.g., `$t('key')`) using magic-string for non-destructive code replacements.
 
 ## Common Commands
 

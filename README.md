@@ -16,13 +16,13 @@
   - CLI 命令说明
   - 运行示例
 
-- **[架构设计与运行逻辑](./docs//ARCHITECTURE.md)**
+- **[架构设计与运行逻辑](./docs/ARCHITECTURE.md)**
   - 核心架构图
   - 8 阶段处理流程详解
   - 核心模块说明 (Director, Parsers, Transformer)
   - 关键技术点 (AST, MagicString)
 
-- **[开发指南](./docs//DEVELOPMENT.md)**
+- **[开发指南](./docs/DEVELOPMENT.md)**
   - 项目目录结构
   - 开发规范与原则
   - 调试与测试
@@ -35,6 +35,8 @@
   - 自动识别模板文本、属性值、脚本字符串。
   - 智能切分：仅去除首尾空白，保留标点符号和数字在翻译文本中，以维护语境完整性（如 `放行时间(天):` 整体提取）。
   - 模板内混合文本整体提取（如 `<p>测试2下</p>`）。
+  - 支持模板字符串变量提取：`欢迎 ${name}` → `$t('key', { arg0: name })`
+- **命名参数支持**: 使用 `{arg0}`, `{arg1}` 占位符，支持不同语言调整参数顺序
 - **自动依赖注入**:
   - 自动检测并注入 `$t` 函数引用 (React/JS/Vue3)。
   - 支持自定义注入语句。
@@ -359,6 +361,52 @@ module.exports = {
 - `-c, --config <path>`: 指定配置文件路径 (默认为 `i18n.config.js`，如果文件在根目录可省略)。
 - `-l, --log-dir <path>`: 指定日志输出目录 (覆盖配置文件中的 logDir)。
 - `-d, --dry-run`:  试运行，不修改文件。
+
+## 模板字符串处理
+
+工具支持提取模板字符串中的变量，并生成命名参数格式的 i18n 调用：
+
+**输入代码：**
+```vue
+<template>
+  <div :title="`确定上架促销【${row.title}】？`">
+    {{ `欢迎${user.name}登录` }}
+  </div>
+</template>
+```
+
+**输出代码：**
+```vue
+<template>
+  <div :title="$t('key1', { arg0: row.title })">
+    {{ $t('key2', { arg0: user.name }) }}
+  </div>
+</template>
+```
+
+**生成的语言文件：**
+```json
+{
+  "key1": "确定上架促销【{arg0}】？",
+  "key2": "欢迎{arg0}登录"
+}
+```
+
+**多变量支持：**
+```javascript
+// 输入
+const msg = `你好 ${firstName} ${lastName}`;
+
+// 输出
+const msg = $t('key', { arg0: firstName, arg1: lastName });
+
+// 语言文件
+{
+  "key": "你好{arg0}{arg1}"
+}
+```
+
+**优势：** 不同语言的翻译可以调整参数顺序，例如英文可以翻译为 `"Hello {arg1} {arg0}"`。
 
 ## 运行结果
 

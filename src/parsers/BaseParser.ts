@@ -1,4 +1,15 @@
 /**
+ * 模板变量接口
+ * 表示模板字符串或插值表达式中的变量
+ */
+export interface TemplateVariable {
+  /** 变量名 */
+  name: string;
+  /** 变量在模板中的原始表达式 */
+  expression: string;
+}
+
+/**
  * 解析项接口
  * 表示从源代码中提取的待翻译文本项
  */
@@ -25,6 +36,12 @@ export interface ParseItem {
   attrName?: string;
   /** 最终替换的 key */
   finalKey?: string;
+  /** 模板变量列表（用于插值替换） */
+  variables?: TemplateVariable[];
+  /** 完整的模板字符串起始位置（用于替换整个模板字符串） */
+  templateStart?: number;
+  /** 完整的模板字符串结束位置 */
+  templateEnd?: number;
 }
 
 /**

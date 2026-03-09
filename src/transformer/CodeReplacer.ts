@@ -38,6 +38,11 @@ export class CodeReplacer {
       if (item.type === 'VUE_TEMPLATE_ATTR' && item.attrName) {
         const newAttr = `:${item.attrName}="${snippet}"`;
         this.magicString.overwrite(item.start, item.end, newAttr);
+      } else if (item.type === 'TEMPLATE_LITERAL' || item.type === 'VUE_TEMPLATE_LITERAL') {
+        // 对于模板字符串，使用 templateStart 和 templateEnd 替换整个字符串
+        const start = item.templateStart ?? item.start;
+        const end = item.templateEnd ?? item.end;
+        this.magicString.overwrite(start, end, snippet);
       } else if (item.type === 'TEMPLATE_QUASI' || item.type === 'VUE_TEMPLATE_QUASI') {
         this.magicString.overwrite(item.start, item.end, snippet);
       } else {

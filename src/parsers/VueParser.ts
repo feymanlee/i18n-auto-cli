@@ -1,6 +1,6 @@
 import { parse as vueParse } from 'vue-eslint-parser';
 import fs from 'fs-extra';
-import { BaseParser, ParseItem } from './BaseParser';
+import { BaseParser, ParseItem, TemplateVariable } from './BaseParser';
 import { SmartSlicer } from '../utils/smartSlicer';
 import { ScriptParser } from './ScriptParser';
 import { ConfigManager } from '../config/ConfigManager';
@@ -111,9 +111,19 @@ export class VueParser extends BaseParser {
     offset: number
   ): void {
     scriptItems.forEach(item => {
-      item.start += expStart - offset;
-      item.end += expStart - offset;
-      if (item.type === 'TEMPLATE_QUASI') {
+      const adjustment = expStart - offset;
+      item.start += adjustment;
+      item.end += adjustment;
+      // 同时调整 templateStart 和 templateEnd
+      if (item.templateStart !== undefined) {
+        item.templateStart += adjustment;
+      }
+      if (item.templateEnd !== undefined) {
+        item.templateEnd += adjustment;
+      }
+      if (item.type === 'TEMPLATE_LITERAL') {
+        item.type = 'VUE_TEMPLATE_LITERAL';
+      } else if (item.type === 'TEMPLATE_QUASI') {
         item.type = 'VUE_TEMPLATE_QUASI';
       } else {
         item.type = 'VUE_TEMPLATE_JS_STRING';

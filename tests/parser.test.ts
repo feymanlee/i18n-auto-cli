@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ScriptParser } from '../dist/src/parsers/ScriptParser.js';
-import { VueParser } from '../dist/src/parsers/VueParser.js';
-import { ConfigManager } from '../dist/src/config/ConfigManager.js';
+import { ScriptParser } from '../dist/parsers/ScriptParser.js';
+import { VueParser } from '../dist/parsers/VueParser.js';
+import { ConfigManager } from '../dist/config/ConfigManager.js';
 
 describe('ScriptParser', () => {
   let parser: ScriptParser;
@@ -50,7 +50,40 @@ export default function App() {
       const items = await parser.parse('test.js', code);
 
       expect(items).toHaveLength(1);
-      expect(items[0].type).toBe('TEMPLATE_QUASI');
+      expect(items[0].type).toBe('TEMPLATE_LITERAL');
+    });
+
+    it('应提取带变量的模板字符串并识别变量', async () => {
+      const code = 'const name = "Tom"; const msg = `欢迎 ${name}`;';
+      const items = await parser.parse('test.js', code);
+
+      expect(items).toHaveLength(1);
+      expect(items[0].type).toBe('TEMPLATE_LITERAL');
+      expect(items[0].coreText).toBe('欢迎 {arg0}');
+      expect(items[0].variables).toBeDefined();
+      expect(items[0].variables).toHaveLength(1);
+      expect(items[0].variables![0].name).toBe('name');
+      expect(items[0].variables![0].expression).toBe('name');
+    });
+
+    it('应提取带多个变量的模板字符串', async () => {
+      const code = 'const msg = `你好 ${firstName} ${lastName}`;';
+      const items = await parser.parse('test.js', code);
+
+      expect(items).toHaveLength(1);
+      expect(items[0].type).toBe('TEMPLATE_LITERAL');
+      expect(items[0].coreText).toBe('你好 {arg0} {arg1}');
+      expect(items[0].variables).toHaveLength(2);
+    });
+
+    it('应提取带对象属性的模板字符串', async () => {
+      const code = 'const msg = `欢迎 ${user.name}`;';
+      const items = await parser.parse('test.js', code);
+
+      expect(items).toHaveLength(1);
+      expect(items[0].variables).toHaveLength(1);
+      expect(items[0].variables![0].name).toBe('name');
+      expect(items[0].variables![0].expression).toBe('user.name');
     });
   });
 });
@@ -110,6 +143,17 @@ const msg = "测试消息";
       expect(items.length).toBeGreaterThan(0);
       const attrItem = items.find(item => item.type === 'VUE_TEMPLATE_ATTR');
       expect(attrItem).toBeDefined();
+    });
+
+    it('应提取 Vue 模板中的插值表达式', async () => {
+      const code = '<template>\n  <div>{{ `欢迎 ${name}` }}</div>\n</template>';
+      const items = await parser.parse('Test.vue', code);
+
+      const literalItem = items.find(item => item.type === 'VUE_TEMPLATE_LITERAL');
+      expect(literalItem).toBeDefined();
+      expect(literalItem!.coreText).toBe('欢迎 {arg0}');
+      expect(literalItem!.variables).toHaveLength(1);
+      expect(literalItem!.variables![0].name).toBe('name');
     });
   });
 });

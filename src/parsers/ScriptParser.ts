@@ -2,7 +2,7 @@ import { parse as babelParse } from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
 import fs from 'fs-extra';
-import { BaseParser, ParseItem } from './BaseParser';
+import { BaseParser, ParseItem, TemplateVariable } from './BaseParser';
 import { SmartSlicer } from '../utils/smartSlicer';
 import { ConfigManager } from '../config/ConfigManager';
 
@@ -123,24 +123,56 @@ export class ScriptParser extends BaseParser {
           if (t.isJSXIdentifier(attrNode.name) && ignoreAttributes.includes(attrNode.name.name)) return;
         }
 
-        path.node.quasis.forEach((quasi) => {
-          if (quasi.value.raw && SmartSlicer.slice(quasi.value.raw).hasChinese) {
-            const start = quasi.start;
-            const end = quasi.end;
-            if (start !== undefined && end !== undefined) {
-              items.push({
-                text: quasi.value.raw,
-                coreText: quasi.value.raw,
-                prefix: '',
-                suffix: '',
-                start: start as number,
-                end: end as number,
-                filePath,
-                scope: '',
-                type: 'TEMPLATE_QUASI',
-              });
-            }
+        const node = path.node;
+        const quasis = node.quasis;
+        const expressions = node.expressions;
+
+        // 检查是否包含中文
+        const hasChinese = quasis.some(quasi => SmartSlicer.slice(quasi.value.raw).hasChinese);
+        if (!hasChinese) return;
+
+        // 收集所有变量
+        const variables: TemplateVariable[] = [];
+        expressions.forEach((expr, index) => {
+          const expressionCode = code.slice(expr.start!, expr.end!);
+          // 尝试获取变量名（如果是简单标识符）
+          let varName = expressionCode;
+          if (t.isIdentifier(expr)) {
+            varName = expr.name;
+          } else if (t.isMemberExpression(expr) && t.isIdentifier(expr.property)) {
+            varName = expr.property.name;
           }
+          variables.push({
+            name: varName,
+            expression: expressionCode,
+          });
+        });
+
+        // 构建核心文本（将插值替换为占位符如 {arg0}, {arg1}）
+        let coreText = '';
+        quasis.forEach((quasi, index) => {
+          coreText += quasi.value.raw;
+          if (index < quasis.length - 1) {
+            coreText += `{arg${index}}`;
+          }
+        });
+
+        // 使用 SmartSlicer 处理核心文本
+        const sliced = SmartSlicer.slice(coreText);
+
+        items.push({
+          text: coreText,
+          coreText: sliced.coreText,
+          prefix: sliced.prefix,
+          suffix: sliced.suffix,
+          start: node.start!,
+          end: node.end!,
+          filePath,
+          scope: '',
+          type: 'TEMPLATE_LITERAL',
+          variables,
+          templateStart: node.start!,
+          templateEnd: node.end!,
         });
       },
 
